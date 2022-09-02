@@ -1,8 +1,8 @@
 import { ROUTES_PATH } from '../constants/routes.js';
 import Logout from './Logout.js';
 
-//pour appeler les handlers : il faut importer 
-//les classes Bills et NewBill, les instancier en leur passant les bons paramètres et appeler les méthodes. 
+//pour appeler les handlers : il faut importer
+//les classes Bills et NewBill, les instancier en leur passant les bons paramètres et appeler les méthodes.
 
 export default class NewBill {
 	constructor({ document, onNavigate, store, localStorage }) {
@@ -20,14 +20,20 @@ export default class NewBill {
 	}
 	handleChangeFile = (e) => {
 		e.preventDefault();
-		const file = this.document.querySelector(`input[data-testid="file"]`).files[0];
+
 		const filePath = e.target.value.split(/\\/g);
-
 		const fileName = filePath[filePath.length - 1];
-		console.log(fileName)
+
+		const inputField = this.document.querySelector(`input[data-testid="file"]`);
+		const file = inputField.files[0];
 
 
-	
+		if(/(jpe?g|png|gif)$/i.test(file?.name) === false){
+			alert('Merci de chosir un format correct JPG PNG, JPEG ou autre')
+			inputField.value = ""
+			return
+		}
+
 		const formData = new FormData();
 		const email = JSON.parse(localStorage.getItem('user')).email;
 		formData.append('file', file);
@@ -42,7 +48,6 @@ export default class NewBill {
 				}
 			})
 			.then(({ fileUrl, key }) => {
-				console.log(fileUrl);
 				this.billId = key;
 				this.fileUrl = fileUrl;
 				this.fileName = fileName;
@@ -51,6 +56,8 @@ export default class NewBill {
 	};
 	handleSubmit = (e) => {
 		e.preventDefault();
+
+		console.log('Submitting');
 		console.log(
 			'e.target.querySelector(`input[data-testid="datepicker"]`).value',
 			e.target.querySelector(`input[data-testid="datepicker"]`).value
